@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Daily Assistant | AI Productivity Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f72585;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tagline {
+            color: var(--dark);
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .card-header i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .card-header h2 {
+            font-size: 1.3rem;
+        }
+        
+        /* Task Manager */
+        .task-input {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        
+        .task-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 30px 0 0 30px;
+            outline: none;
+            font-size: 1rem;
+        }
+        
+        .task-input button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 0 30px 30px 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .task-input button:hover {
+            background: var(--secondary);
+        }
+        
+        .task-list {
+            list-style: none;
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .task-item:last-child {
+            border-bottom: none;
+        }
+        
+        .task-item input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        
+        .task-item.completed {
+            opacity: 0.6;
+        }
+        
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+        }
+        
+        .task-item .delete-task {
+            margin-left: auto;
+            color: var(--warning);
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .task-item:hover .delete-task {
+            opacity: 1;
+        }
+        
+        /* Time Tracker */
+        .timer-display {
+            font-size: 2.5rem;
+            text-align: center;
+            margin: 1rem 0;
+            font-family: monospace;
+            color: var(--dark);
+        }
+        
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .timer-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .start-btn {
+            background: var(--success);
+            color: white;
+        }
+        
+        .pause-btn {
+            background: #ffbe0b;
+            color: white;
+        }
+        
+        .reset-btn {
+            background: var(--warning);
+            color: white;
+        }
+        
+        /* Notes Section */
+        .notes-textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            resize: none;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        
+        .save-notes {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .save-notes:hover {
+            background: var(--secondary);
+        }
+        
+        /* Analytics */
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .productivity-chart {
+            width: 100%;
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-end;
+            padding: 10px;
+            gap: 10px;
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background: var(--accent);
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            transition: height 0.5s ease;
+        }
+        
+        .chart-bar::after {
+            content: attr(data-day);
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Smart Daily Assistant</h1>
+            <p class="tagline">Your AI-powered productivity companion</p>
+        </header>
+        
+        <div class="dashboard">
+            <!-- Task Manager -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-tasks"></i>
+                    <h2>Task Manager</h2>
+                </div>
+                <div class="task-input">
+                    <input type="text" id="new-task" placeholder="Add a new task...">
+                    <button id="add-task"><i class="fas fa-plus"></i></button>
+                </div>
+                <ul class="task-list" id="task-list">
+                    <!-- Tasks will be added here dynamically -->
+                </ul>
+            </div>
+            
+            <!-- Time Tracker -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-clock"></i>
+                    <h2>Focus Timer</h2>
+                </div>
+                <div class="timer-display" id="timer">25:00</div>
+                <div class="timer-controls">
+                    <button class="timer-btn start-btn" id="start-timer">Start</button>
+                    <button class="timer-btn pause-btn" id="pause-timer" disabled>Pause</button>
+                    <button class="timer-btn reset-btn" id="reset-timer" disabled>Reset</button>
+                </div>
+                <div style="text-align: center; margin-top: 1rem;">
+                    <small>Pomodoro Technique: 25 min work, 5 min break</small>
+                </div>
+            </div>
+            
+            <!-- Quick Notes -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-sticky-note"></i>
+                    <h2>Quick Notes</h2>
+                </div>
+                <textarea class="notes-textarea" id="notes" placeholder="Jot down your thoughts, ideas, or reminders..."></textarea>
+                <button class="save-notes" id="save-notes">Save Notes</button>
+            </div>
+            
+            <!-- Productivity Analytics -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Productivity Analytics</h2>
+                </div>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="completed-tasks">0</div>
+                        <div class="stat-label">Tasks Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="focus-time">0</div>
+                        <div class="stat-label">Minutes Focused</div>
+                    </div>
+                </div>
+                <h3 style="margin: 1rem 0 0.5rem; font-size: 1rem;">Weekly Productivity</h3>
+                <div class="productivity-chart" id="productivity-chart">
+                    <div class="chart-bar" data-day="Mon" style="height: 30%;"></div>
+                    <div class="chart-bar" data-day="Tue" style="height: 50%;"></div>
+                    <div class="chart-bar" data-day="Wed" style="height: 70%;"></div>
+                    <div class="chart-bar" data-day="Thu" style="height: 40%;"></div>
+                    <div class="chart-bar" data-day="Fri" style="height: 60%;"></div>
+                    <div class="chart-bar" data-day="Sat" style="height: 20%;"></div>
+                    <div class="chart-bar" data-day="Sun" style="height: 10%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Task Manager Functionality
+            const taskInput = document.getElementById('new-task');
+            const addTaskBtn = document.getElementById('add-task');
+            const taskList = document.getElementById('task-list');
+            
+            // Load tasks from localStorage
+            let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            
+            function renderTasks() {
+                taskList.innerHTML = '';
+                tasks.forEach((task, index) => {
+                    const taskItem = document.createElement('li');
+                    taskItem.className = `task-item ${task.completed ? 'completed' : ''}`;
+                    taskItem.innerHTML = `
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} data-index="${index}">
+                        <span class="task-text">${task.text}</span>
+                        <span class="delete-task" data-index="${index}"><i class="fas fa-trash"></i></span>
+                    `;
+                    taskList.appendChild(taskItem);
+                });
+                
+                // Update completed tasks count
+                document.getElementById('completed-tasks').textContent = 
+                    tasks.filter(task => task.completed).length;
+            }
+            
+            function addTask() {
+                const text = taskInput.value.trim();
+                if (text) {
+                    tasks.push({ text, completed: false });
+                    localStorage.setItem('tasks', JSON.stringify(tasks));
+                    taskInput.value = '';
+                    renderTasks();
+                }
+            }
+            
+            addTaskBtn.addEventListener('click', addTask);
+            taskInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addTask();
+            });
+            
+            taskList.addEventListener('click', function(e) {
+                if (e.target.matches('.delete-task, .delete-task *')) {
+                    const index = e.target.closest('.delete-task').dataset.index;
+                    tasks.splice(index, 1);
+                    localStorage.setItem('tasks', JSON.stringify(tasks));
+                    renderTasks();
+                } else if (e.target.matches('input[type="checkbox"]')) {
+                    const index = e.target.dataset.index;
+                    tasks[index].completed = e.target.checked;
+                    localStorage.setItem('tasks', JSON.stringify(tasks));
+                    renderTasks();
+                }
+            });
+            
+            // Timer Functionality
+            const timerDisplay = document.getElementById('timer');
+            const startBtn = document.getElementById('start-timer');
+            const pauseBtn = document.getElementById('pause-timer');
+            const resetBtn = document.getElementById('reset-timer');
+            
+            let timer;
+            let minutes = 25;
+            let seconds = 0;
+            let isRunning = false;
+            let totalSecondsFocused = parseInt(localStorage.getItem('totalSecondsFocused')) || 0;
+            
+            function updateTimerDisplay() {
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            function startTimer() {
+                if (!isRunning) {
+                    isRunning = true;
+                    startBtn.disabled = true;
+                    pauseBtn.disabled = false;
+                    resetBtn.disabled = false;
+                    
+                    timer = setInterval(() => {
+                        if (seconds === 0) {
+                            if (minutes === 0) {
+                                clearInterval(timer);
+                                isRunning = false;
+                                alert('Time is up! Take a 5 minute break.');
+                                totalSecondsFocused += 25 * 60;
+                                localStorage.setItem('totalSecondsFocused', totalSecondsFocused);
+                                updateFocusTime();
+                                resetTimer();
+                                return;
+                            }
+                            minutes--;
+                            seconds = 59;
+                        } else {
+                            seconds--;
+                        }
+                        
+                        updateTimerDisplay();
+                    }, 1000);
+                }
+            }
+            
+            function pauseTimer() {
+                clearInterval(timer);
+                isRunning = false;
+                startBtn.disabled = false;
+                pauseBtn.disabled = true;
+            }
+            
+            function resetTimer() {
+                pauseTimer();
+                minutes = 25;
+                seconds = 0;
+                updateTimerDisplay();
+                resetBtn.disabled = true;
+            }
+            
+            startBtn.addEventListener('click', startTimer);
+            pauseBtn.addEventListener('click', pauseTimer);
+            resetBtn.addEventListener('click', resetTimer);
+            
+            // Notes Functionality
+            const notesTextarea = document.getElementById('notes');
+            const saveNotesBtn = document.getElementById('save-notes');
+            
+            // Load saved notes
+            notesTextarea.value = localStorage.getItem('notes') || '';
+            
+            saveNotesBtn.addEventListener('click', function() {
+                localStorage.setItem('notes', notesTextarea.value);
+                alert('Notes saved successfully!');
+            });
+            
+            // Analytics Functionality
+            function updateFocusTime() {
+                const focusMinutes = Math.floor(totalSecondsFocused / 60);
+                document.getElementById('focus-time').textContent = focusMinutes;
+                localStorage.setItem('totalSecondsFocused', totalSecondsFocused);
+            }
+            
+            // Simulate some productivity data for the chart
+            function updateProductivityChart() {
+                const chartBars = document.querySelectorAll('.chart-bar');
+                chartBars.forEach(bar => {
+                    // Randomize height for demo (in a real app, this would use actual data)
+                    const randomHeight = Math.floor(Math.random() * 80) + 10;
+                    bar.style.height = `${randomHeight}%`;
+                    
+                    // Color based on productivity level
+                    if (randomHeight > 60) {
+                        bar.style.backgroundColor = '#4cc9f0';
+                    } else if (randomHeight > 30) {
+                        bar.style.backgroundColor = '#4895ef';
+                    } else {
+                        bar.style.backgroundColor = '#4361ee';
+                    }
+                });
+            }
+            
+            // Initialize
+            renderTasks();
+            updateTimerDisplay();
+            updateFocusTime();
+            updateProductivityChart();
+        });
+    </script>
+</body>
+</html>
